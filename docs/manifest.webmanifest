@@ -1,0 +1,78 @@
+{
+  "name": "Manual Pr\u00e1tico TICOs \u2014 NR10/NR35 (Ultra)",
+  "short_name": "TICOs Ultra",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "theme_color": "#FF7A00",
+  "background_color": "#0e0f12",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "icons/icon-192-mono.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "monochrome"
+    },
+    {
+      "src": "icons/icon-512-mono.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "monochrome"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "./#dash",
+      "icons": [
+        {
+          "src": "icons/icon-192-mono.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Checklist",
+      "url": "./#check",
+      "icons": [
+        {
+          "src": "icons/icon-192-mono.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Reportar Risco",
+      "url": "./#risk",
+      "icons": [
+        {
+          "src": "icons/icon-192-mono.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
