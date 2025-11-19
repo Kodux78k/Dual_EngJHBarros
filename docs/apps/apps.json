@@ -1,0 +1,32 @@
+{
+  "apps": [
+    {
+      "key": "ticos",
+      "title": "🗒️ Práticas — NR10/NR35 (Ultra)",
+      "desc": "PWA offline com dashboard, lembrete e relatos com áudio.",
+      "icon": "icons/icon-192.png",
+      "url": "./PWA_TICO_Ultra/index.html"
+    },
+    {
+      "key": "app2",
+      "title": "🏠 Regualização ",
+      "desc": "Regularize seu imóvel.",
+      "icon": "icons/icon-192.png",
+      "url": "./apps/lp-reg-10-ok-R-5.html"
+    },
+        {
+      "key": "Contratos",
+      "title": "📑 Gerar Contrato ",
+      "desc": "Gere orçamentos.",
+      "icon": "icons/icon-192.png",
+      "url": "./apps/JHBARROS-contratos.html"
+    },
+        {
+      "key": "d0x",
+      "title": "📜 infoD0X ",
+      "desc": "Livro vivo.",
+      "icon": "icons/icon-192.png",
+      "url": "./apps/index_final_cards_nossolar.html"
+    }
+  ]
+}
