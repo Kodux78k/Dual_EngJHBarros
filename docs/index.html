@@ -1,983 +1,720 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!doctype html>
+<html lang="pt-br">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-<title>Manual Prático TICOs — NR10/NR35</title>
-<meta name="theme-color" content="#FF7A00"/>
-<style>
-:root{
-  --bg:#0e0f12;
-  --fg:#e9eef6;
-  --muted:#a8b0c3;
-  --card:#161821;
-  --accent:#FF7A00; /* laranja obra */
-  --warn:#FFD60A;   /* amarelo */
-  --info:#2E59FF;   /* azul */
-  --ok:#22c55e;
-  --bad:#ef4444;
-  --lux:#111111;    /* preto luxara */
-  --gold:#D4AF37;   /* dourado luxara */
-  --shadow: 0 10px 25px rgba(0,0,0,.35);
-  --radius:18px;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
-  background: radial-gradient(1200px 800px at 50% -10%, rgba(46,89,255,.12), transparent 60%),
-              linear-gradient(180deg, #0b0c10 0%, #0e0f12 40%, #0a0b0f 100%);
-  color:var(--fg);
-}
-h1,h2,h3{margin:0 0 .5rem}
-h1{font-size:1.4rem}
-h2{font-size:1.15rem;color:#fff}
-h3{font-size:1rem;color:var(--muted)}
-p{margin:.35rem 0;color:#dfe6f6}
-small{color:var(--muted)}
+  <meta charset="utf-8" />
+  <title>Hub ASSERT • Dual.Infodose</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050510" id="metaThemeColor">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon-180.png">
 
-.container{padding:16px 14px 90px;max-width:760px;margin:0 auto}
-.row{display:grid;gap:12px}
-.card{
-  background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:var(--radius);
-  padding:14px;
-  box-shadow:var(--shadow);
-}
-.card.lux{
-  background:linear-gradient(180deg, #0a0a0a, #0d0d0d);
-  border:1px solid rgba(212,175,55,.35);
-}
-.kicker{font-size:.75rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+  <style>
+    :root{
+      --bg:#050510;
+      --bg-elevated:#09091a;
+      --bg-soft:#0b0b1f;
+      --stroke-soft:rgba(255,255,255,.08);
+      --accent:#1be4ff;
+      --accent-soft:rgba(27,228,255,.14);
+      --accent-strong:#56f8c6;
+      --text:#f9fbff;
+      --muted:rgba(245,246,255,.7);
+      --shadow-soft:0 16px 40px rgba(0,0,0,.7);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --radius-md:12px;
+      --blur:24px;
+    }
+    [data-theme="lux"]{
+      --bg:#050508;
+      --bg-elevated:#0b0819;
+      --bg-soft:#141027;
+      --stroke-soft:rgba(255,255,255,.09);
+      --accent:#ffdf6b;
+      --accent-soft:rgba(255,223,107,.12);
+      --accent-strong:#ff9ef2;
+      --text:#fff9f0;
+      --muted:rgba(255,245,230,.78);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(27,228,255,.18) 0%, transparent 52%),
+        radial-gradient(circle at bottom right, rgba(255,158,242,.16) 0%, transparent 50%),
+        radial-gradient(circle at top right, rgba(255,223,107,.12) 0%, transparent 46%),
+        linear-gradient(135deg, #050510 0%, #050512 40%, #050508 100%);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      padding-bottom:env(safe-area-inset-bottom);
+    }
+    body.modal-open{
+      overflow:hidden;
+      touch-action:none;
+    }
+    main{
+      max-width:720px;
+      margin:0 auto;
+      padding:12px 12px calc(18px + env(safe-area-inset-bottom));
+    }
+    .header{
+      position:sticky;
+      top:0;
+      z-index:40;
+      backdrop-filter:blur(18px);
+      -webkit-backdrop-filter:blur(18px);
+      background:linear-gradient(to bottom,rgba(5,5,16,.96),rgba(5,5,16,.84),transparent);
+      border-bottom:1px solid rgba(255,255,255,.04);
+      box-shadow:0 20px 40px rgba(0,0,0,.55);
+    }
+    .inner{
+      max-width:720px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px 14px;
+    }
+    .logo{
+      width:52px;
+      height:52px;
+      border-radius:999px;
+      background:
+        radial-gradient(circle at 30% 20%, #ffffff 0, #ffece3 4%, transparent 45%),
+        radial-gradient(circle at 70% 80%, rgba(86,248,198,.85) 0, transparent 55%),
+        conic-gradient(from 210deg, rgba(27,228,255,1), rgba(86,248,198,1), rgba(255,223,107,1), rgba(255,158,242,1), rgba(27,228,255,1));
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.15),
+        0 18px 35px rgba(0,0,0,.7),
+        0 0 40px rgba(86,248,198,.4);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo::after{
+      content:"";
+      position:absolute;
+      inset:18%;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.25);
+      box-shadow:inset 0 0 22px rgba(0,0,0,.7);
+    }
+    .kicker{
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:var(--muted);
+      opacity:.9;
+    }
+    h1{
+      font-size:1.1rem;
+      font-weight:650;
+      letter-spacing:.03em;
+      margin-top:2px;
+    }
+    .topbar{
+      margin-left:auto;
+      display:flex;
+      gap:6px;
+      align-items:center;
+    }
+    .tbtn{
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.08);
+      background:rgba(5,5,20,.9);
+      color:var(--muted);
+      padding:6px 12px;
+      font-size:.76rem;
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      cursor:pointer;
+      backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px);
+      box-shadow:0 10px 24px rgba(0,0,0,.45);
+    }
+    .tbtn[aria-pressed="true"]{
+      background:linear-gradient(135deg,var(--accent),var(--accent-strong));
+      color:#050510;
+      border-color:rgba(0,0,0,.3);
+    }
 
-.header{
-  position:sticky;top:0;z-index:50;
-  backdrop-filter: blur(10px);
-  background:rgba(14,15,18,.65);
-  border-bottom:1px solid rgba(255,255,255,.06);
-}
-.header-inner{max-width:760px;margin:0 auto;padding:10px 14px;display:flex;align-items:center;gap:12px}
-.logo{
-  width:40px;height:40px;border-radius:50%;
-  background:radial-gradient(circle at 30% 30%, #fff6, transparent 60%), conic-gradient(from 0deg, var(--accent), var(--warn), var(--info), var(--accent));
-  position:relative;box-shadow:0 0 0 3px #0008, inset 0 0 20px #000;
-  animation:pulse 2.4s infinite ease-in-out;
-}
-.logo:after{
-  content:"⚡";position:absolute;inset:0;display:grid;place-items:center;
-  font-size:20px;text-shadow:0 0 12px rgba(255,122,0,.8);
-}
-@keyframes pulse{
-  0%,100%{transform:scale(1); box-shadow:0 0 0 0 rgba(255,122,0,.25)}
-  50%{transform:scale(1.06); box-shadow:0 0 0 12px rgba(255,122,0,.06)}
-}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+    .card{
+      border-radius:var(--radius-lg);
+      background:radial-gradient(circle at top left,rgba(255,255,255,.08) 0, rgba(255,255,255,0) 45%),
+                 linear-gradient(135deg,var(--bg-elevated),var(--bg-soft));
+      border:1px solid var(--stroke-soft);
+      box-shadow:var(--shadow-soft);
+      padding:10px 10px 10px 12px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      min-height:86px;
+    }
+    .icon{
+      width:60px;
+      height:60px;
+      border-radius:18px;
+      background:radial-gradient(circle,#ffffff 0,#d9f7ff 10%,transparent 60%);
+      border:1px solid rgba(255,255,255,.16);
+      box-shadow:0 14px 30px rgba(0,0,0,.65);
+      flex-shrink:0;
+      overflow:hidden;
+    }
+    .title{
+      font-size:.98rem;
+      font-weight:600;
+      letter-spacing:.02em;
+    }
+    .muted{
+      font-size:.8rem;
+      color:var(--muted);
+      margin-top:3px;
+    }
+    .row{
+      display:flex;
+      gap:6px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .btn{
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(5,5,20,.9);
+      color:var(--text);
+      padding:6px 11px;
+      font-size:.76rem;
+      display:inline-flex;
+      align-items:center;
+      gap:4px;
+      cursor:pointer;
+      text-decoration:none;
+    }
+    .btn:hover{
+      border-color:var(--accent-soft);
+      box-shadow:0 10px 22px rgba(0,0,0,.6);
+    }
+    footer{
+      max-width:720px;
+      margin:10px auto 8px;
+      padding:4px 14px 12px;
+      font-size:.74rem;
+      color:var(--muted);
+      text-align:center;
+      opacity:.85;
+    }
 
-.header-title{flex:1}
-.header-title h1{display:flex;align-items:center;gap:8px}
-.badge{
-  font-size:.72rem;padding:.15rem .5rem;border-radius:999px;
-  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-  border:1px solid rgba(255,255,255,.1);
+    .viewer{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(1,2,10,.88);
+      z-index:50;
+      padding:18px 10px calc(18px + env(safe-area-inset-bottom));
+    }
+    .viewer.show{display:flex;}
+    .frame{
+      width:100%;
+      max-width:900px;
+      max-height:100%;
+      border-radius:var(--radius-xl);
+      background:linear-gradient(145deg,var(--bg-elevated),#050512);
+      border:1px solid var(--stroke-soft);
+      box-shadow:0 24px 60px rgba(0,0,0,.9);
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+    }
+    .bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 12px 8px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background:linear-gradient(to right,rgba(255,255,255,.06),transparent);
+    }
+    .bar .left{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      font-size:.86rem;
+      font-weight:600;
+    }
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:999px;
+      background:radial-gradient(circle,#ff7755 0,#ff2d55 50%,#d0003a 100%);
+      box-shadow:0 0 10px rgba(255,90,120,.7);
+    }
+    .iframe{
+      border:0;
+      flex:1;
+      width:100%;
+      background:#02030b;
+    }
+    .loader{
+      position:absolute;
+      inset:auto 0 0;
+      height:3px;
+      background:linear-gradient(90deg,transparent,rgba(27,228,255,.7),transparent);
+      transform-origin:left;
+      scale:0 1;
+      opacity:0;
+      transition:opacity .16s ease,scale .16s ease;
+    }
+    .loader.show{
+      scale:1 1;
+      opacity:1;
+      animation:loadbar 1.1s infinite;
+    }
+    @keyframes loadbar{
+      0%{transform:translateX(-40%)}
+      50%{transform:translateX(10%)}
+      100%{transform:translateX(40%)}
+    }
+    .spinner{
+      width:18px;
+      height:18px;
+      border-radius:999px;
+      border:2px solid rgba(255,255,255,.2);
+      border-top-color:var(--accent);
+      animation:spin .9s linear infinite;
+      position:absolute;
+      top:-10px;
+      right:12px;
+      box-shadow:0 0 12px rgba(27,228,255,.7);
+    }
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+
+    .skeleton{
+      height:84px;
+      border-radius:var(--radius-lg);
+      background:
+        linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,.14),rgba(255,255,255,.04));
+      background-size:240% 100%;
+      animation:sk 1.1s infinite;
+      border:1px solid rgba(255,255,255,.06);
+      box-shadow:0 18px 40px rgba(0,0,0,.85);
+    }
+    @keyframes sk{0%{background-position:100% 0}100%{background-position:0 0}}
+
+    @media (max-width:420px){
+      .logo{width:44px;height:44px}
+      h1{font-size:1.06rem}
+      .title{font-size:1rem}
+      .icon{width:54px;height:54px}
+    }
+  </style>
+  <style>
+/* ===== Fix: header buttons dentro do plano vertical (mobile) ===== */
+@media (max-width: 480px){
+  .inner{
+    display:grid;
+    grid-template-columns: 52px 1fr;
+    grid-template-areas:
+      "logo  title"
+      "topbar topbar";
+    align-items: center;
+    row-gap: 8px;
+    padding: calc(10px + env(safe-area-inset-top)) 14px 10px;
+  }
+  .inner .logo{ grid-area: logo; }
+  .inner > div:nth-child(2){ grid-area: title; min-width: 0; }
+  .inner .topbar{
+    grid-area: topbar;
+    justify-self: stretch;
+    width: 100%;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .topbar .tbtn{ min-height: 34px; padding: 0 .6rem; }
 }
-.btn{
-  appearance:none;border:none;cursor:pointer;
-  background:linear-gradient(180deg, #202330, #171925);
-  border:1px solid rgba(255,255,255,.08);
-  color:#fff;padding:.7rem 1rem;border-radius:12px;font-weight:600;
-  display:inline-flex;align-items:center;gap:.6rem;justify-content:center
-}
-.btn:active{transform:translateY(1px)}
-.btn.full{width:100%}
-.btn.warn{background:linear-gradient(180deg, #2a2000, #1f1800);border-color:#b38900}
-.btn.accent{background:linear-gradient(180deg, #2b1a10, #1b100a);border-color:#934216}
-.btn.ok{background:linear-gradient(180deg, #15331d, #0f2516);border-color:#225a34}
-.btn.ghost{
-  background:transparent;border:1px dashed rgba(255,255,255,.18);color:var(--muted);
-}
-
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-@media (max-width:420px){ .grid2{grid-template-columns:1fr} .grid3{grid-template-columns:1fr 1fr} }
-
-.section{display:none}
-.section.active{display:block}
-
-.lux-quote{color:var(--gold);font-weight:600}
-.hr{height:1px;background:linear-gradient(90deg, transparent, rgba(255,255,255,.15), transparent);margin:.7rem 0}
-
-.tip{
-  background:linear-gradient(180deg, rgba(255,122,0,.1), rgba(255,122,0,.05));
-  border:1px solid rgba(255,122,0,.25);border-radius:14px;padding:10px;font-size:.95rem
-}
-
-.list{display:grid;gap:8px}
-.item{
-  background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:12px;padding:10px;display:flex;align-items:flex-start;gap:10px
-}
-.item .icon{font-size:1.25rem;line-height:1}
-.item strong{display:block}
-.kv{display:flex;gap:8px;flex-wrap:wrap}
-.kv .pill{
-  font-size:.75rem;padding:.2rem .5rem;border-radius:999px;background:#fff1;border:1px solid #fff2;color:#cfe2ff
-}
-
-.checkrow{display:grid;gap:10px}
-.check{
-  background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
-  border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px
-}
-.check label{display:block;font-weight:700;margin-bottom:6px}
-.choice{display:flex;gap:10px}
-.choice .opt{
-  flex:1;background:#0000;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px;text-align:center;cursor:pointer
-}
-.choice input{display:none}
-.choice input:checked + .opt.ok{outline:2px solid var(--ok); background:rgba(34,197,94,.1)}
-.choice input:checked + .opt.bad{outline:2px solid var(--bad); background:rgba(239,68,68,.1)}
-
-.bottom-nav{
-  position:fixed;z-index:99;bottom:0;left:0;right:0;
-  backdrop-filter: blur(8px);
-  background:rgba(10,11,15,.7);
-  border-top:1px solid rgba(255,255,255,.08);
-}
-.bottom-inner{max-width:760px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:8px}
-.tab{
-  display:flex;flex-direction:column;align-items:center;gap:2px;
-  padding:6px 4px;border-radius:10px;color:#c7d0e8;text-decoration:none;font-size:.75rem
-}
-.tab.active{background:linear-gradient(180deg, rgba(46,89,255,.15), rgba(46,89,255,.05)); color:#fff; border:1px solid rgba(46,89,255,.35)}
-
-.input, textarea{
-  width:100%;padding:.8rem;border-radius:12px;
-  background:#0f1117;color:#fff;border:1px solid rgba(255,255,255,.12)
-}
-label{font-size:.9rem;color:#e7edff}
-
-.gallery{display:flex;gap:8px;overflow:auto}
-.gallery img{height:82px;border-radius:10px;border:1px solid rgba(255,255,255,.12)}
-
-.modal{
-  position:fixed;inset:0;display:none;align-items:flex-end;justify-content:center;
-  background:rgba(0,0,0,.6);z-index:120
-}
-.modal.show{display:flex}
-.sheet{
-  width:100%;max-width:760px;background:#0f1116;border-top-left-radius:16px;border-top-right-radius:16px;
-  border:1px solid rgba(255,255,255,.08);box-shadow:0 -20px 40px rgba(0,0,0,.5);padding:14px
-}
-.sheet .handle{width:60px;height:6px;background:#ffffff22;border-radius:999px;margin:4px auto 10px}
-.sheet .title{font-weight:800;font-size:1.05rem}
-
-.actionbar{display:flex;gap:8px;flex-wrap:wrap}
-.hidden{display:none !important}
-
-.small{font-size:.85rem;color:#cbd5f1}
-
-a.link{color:#9bb4ff}
-hr.soft{border:none;height:1px;background:linear-gradient(90deg, transparent, #ffffff22, transparent);margin:8px 0}
-
-footer{
-  margin-top:16px;
-  color:#94a3b8;font-size:.78rem;text-align:center
-}
-</style>
-
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
+  </style>
 </head>
 <body>
-<header class="header">
-  <div class="header-inner">
-    <div class="logo" id="btnInsight" title="Tocar para frase de segurança"></div>
-    <div class="header-title">
-      <h1>Manual Prático TICOs <span class="badge">NR10 · NR35</span></h1>
-      <small class="kicker">“Sem falar em horas — só prática que salva.”</small>
+  <header class="header" role="banner">
+    <div class="inner">
+      <div class="logo" aria-hidden="true"></div>
+      <div style="flex:1">
+        <div class="kicker">JHBarros.Dual.Infodose • ASSERT</div>
+        <h1>Hub • Home (dinâmico • POWER)</h1>
+      </div>
+      <nav class="topbar" aria-label="Alternar tema e instalar">
+        <button class="tbtn" id="themeCyan" type="button" aria-pressed="true">ASSERT</button>
+        <button class="tbtn" id="themeLux" type="button" aria-pressed="false">Luxara</button>
+        <button class="tbtn" id="btnInstall" type="button">⬇️ Instalar</button>
+        <button class="tbtn" id="btnHubEditor" type="button">✏️ Meu Hub</button>
+      </nav>
     </div>
-    <button class="btn" id="btnSpeak" title="Ler tela em voz alta">🔊 Ler</button>
-    <button class="btn" id="btnInstall" title="Instalar PWA">⬇️ Instalar</button>
-  </div>
-</header>
+  </header>
 
-<main class="container">
-  <!-- HOME -->
-  <section id="home" class="section active">
-    <div class="row">
-      <div class="card tip" id="tipOfDay">
-        <strong>⚡ Dica do Dia</strong>
-        <p id="tipText">Teste o detector de tensão em um ponto conhecido antes de confiar nele.</p>
-        <div class="actionbar">
-          <button class="btn ghost" id="btnNewTip">🎲 Outra dica</button>
-          <button class="btn ghost" id="btnSaveTip">🔖 Salvar nos favoritos</button>
+  <main class="grid" id="cards" aria-live="polite">
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  </main>
+
+  <footer>Hub ASSERT • “Central de apps Dual.Infodose”</footer>
+
+  <!-- Viewer -->
+  <div class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="barTitle">
+    <div class="frame">
+      <div class="bar">
+        <div class="left"><div class="dot" aria-hidden="true"></div><strong id="barTitle">App</strong></div>
+        <div class="row" role="toolbar" aria-label="Ações do app">
+          <button class="btn" id="btnHome" type="button">🏠 Home</button>
+          <a class="btn" id="btnExternal" href="#" target="_blank" rel="noopener" aria-label="Abrir em nova aba">↗️ Abrir em aba</a>
         </div>
       </div>
-
-      <div class="card">
-        <div class="kicker">Atalhos Rápidos</div>
-        <div class="grid3">
-          <button class="btn" data-go="nr10">⚡ NR10</button>
-          <button class="btn" data-go="nr35">🧗 NR35</button>
-          <button class="btn" data-go="check">✅ Checklist</button>
-        </div>
-        <div class="grid3" style="margin-top:8px">
-          <button class="btn warn" data-go="risk">📸 Relatar Risco</button>
-          <button class="btn" data-go="gloss">📚 Glossário</button>
-          <button class="btn" data-go="config">⚙️ Config</button>
-        </div>
-      </div>
-
-      <div class="card lux">
-        <div class="kicker" style="color:var(--gold)">Insight Luxara</div>
-        <p class="lux-quote">“Sua vida é o maior projeto entregue hoje. Pulso seguro, missão cumprida.”</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- NR10 -->
-  <section id="nr10" class="section">
-    <div class="row">
-      <div class="card">
-        <h2>⚡ NR10 — Eletricidade na Prática</h2>
-        <div class="hr"></div>
-        <div class="list">
-          <div class="item">
-            <div class="icon">👀</div>
-            <div><strong>Olho vivo no painel</strong><small class="small"><br/>Cheiro de ozônio, manchas de queimado e pó = alerta de risco.</small></div>
-          </div>
-          <div class="item">
-            <div class="icon">🧪</div>
-            <div><strong>Teste de ausência de tensão</strong><small class="small"><br/>Detector calibrado antes de encostar. Teste em ponto conhecido → meça → reteste.</small></div>
-          </div>
-          <div class="item">
-            <div class="icon">✋</div>
-            <div><strong>Técnica da “uma mão só”</strong><small class="small"><br/>Mantenha uma mão atrás do corpo ao medir; reduz corrente pelo tórax.</small></div>
-          </div>
-          <div class="item">
-            <div class="icon">🧰</div>
-            <div><strong>Checklist mental</strong><small class="small"><br/>Desliga → Bloqueia → Testa → Trabalha.</small></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>3×6×9 — Chave de Curiosidade</h3>
-        <div class="hr"></div>
-        <div class="list">
-          <div class="item">
-            <div class="icon">❓</div>
-            <div><strong>Por quê?</strong><small class="small"><br/>Painéis “desligados” podem estar vivos por retorno, falha de disjuntor ou erro humano.</small></div>
-          </div>
-          <div class="item">
-            <div class="icon">🛠️</div>
-            <div><strong>Como aplicar</strong><small class="small"><br/>Sempre valide o detector no mesmo ambiente e imediatamente antes do toque.</small></div>
-          </div>
-          <div class="item">
-            <div class="icon">🚀</div>
-            <div><strong>Antecipação</strong><small class="small"><br/>Clique no ⚡ (topo) para receber micro‑insights elétricos ao longo do dia.</small></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- NR35 -->
-  <section id="nr35" class="section">
-    <div class="row">
-      <div class="card">
-        <h2>🧗 NR35 — Altura na Prática</h2>
-        <div class="hr"></div>
-        <div class="list">
-          <div class="item">
-            <div class="icon">🔺</div>
-            <div><strong>3 pontos de apoio</strong><small class="small"><br/>Subir/descer com 2 pés + 1 mão (ou 2 mãos + 1 pé). Sem pressa.</small></div>
-          </div>
-          <div class="item">
-            <div class="icon">🧵</div>
-            <div><strong>Talabarte testado</strong><small class="small"><br/>Puxe como se aguentasse seu peso antes de subir.</small></div>
-          </div>
-          <div class="item">
-            <div class="icon">🧯</div>
-            <div><strong>Onde não prender</strong><small class="small"><br/>Nunca em escada solta, tubo fino, guarda‑corpo improvisado.</small></div>
-          </div>
-          <div class="item">
-            <div class="icon">🪢</div>
-            <div><strong>Nó rápido (emergência)</strong><small class="small"><br/>Tenha um talabarte extra para travar se algo falhar.</small></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>3×6×9 — Chave de Curiosidade</h3>
-        <div class="hr"></div>
-        <div class="list">
-          <div class="item">
-            <div class="icon">⏱️</div>
-            <div><strong>Por quê?</strong><small class="small"><br/>1 segundo de queda ≈ 4 m. Não há tempo para pensar; só para já estar preso.</small></div>
-          </div>
-          <div class="item">
-            <div class="icon">🧩</div>
-            <div><strong>Como aplicar</strong><small class="small"><br/>Revise âncora, linha de vida e plano de resgate antes de subir.</small></div>
-          </div>
-          <div class="item">
-            <div class="icon">🎯</div>
-            <div><strong>Antecipação</strong><small class="small"><br/>Ative o “Desafio do Dia”: combine a palavra STOP com a dupla.</small></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CHECKLIST -->
-  <section id="check" class="section">
-    <div class="row">
-      <div class="card">
-        <h2>✅ Checklist — Elétrica em Altura</h2>
-        <div class="hr"></div>
-
-        <div class="checkrow" id="checkForm">
-          <div class="check">
-            <label>Ferramenta isolada conferida</label>
-            <div class="choice">
-              <label style="flex:1"><input type="radio" name="c1" value="ok"><div class="opt ok">OK</div></label>
-              <label style="flex:1"><input type="radio" name="c1" value="bad"><div class="opt bad">Não OK</div></label>
-            </div>
-            <small class="small">Sem fissuras, luvas sem furo, cabo sem descascado.</small>
-          </div>
-
-          <div class="check">
-            <label>Detector de tensão testado</label>
-            <div class="choice">
-              <label style="flex:1"><input type="radio" name="c2" value="ok"><div class="opt ok">OK</div></label>
-              <label style="flex:1"><input type="radio" name="c2" value="bad"><div class="opt bad">Não OK</div></label>
-            </div>
-            <small class="small">Teste no ponto conhecido ➝ meça ➝ reteste.</small>
-          </div>
-
-          <div class="check">
-            <label>Linha de vida em ponto confiável</label>
-            <div class="choice">
-              <label style="flex:1"><input type="radio" name="c3" value="ok"><div class="opt ok">OK</div></label>
-              <label style="flex:1"><input type="radio" name="c3" value="bad"><div class="opt bad">Não OK</div></label>
-            </div>
-            <small class="small">Evite escada solta, tubos finos e guarda‑corpos frágeis.</small>
-          </div>
-
-          <div class="check">
-            <label>Palavra de parada (STOP) combinada</label>
-            <div class="choice">
-              <label style="flex:1"><input type="radio" name="c4" value="ok"><div class="opt ok">OK</div></label>
-              <label style="flex:1"><input type="radio" name="c4" value="bad"><div class="opt bad">Não OK</div></label>
-            </div>
-            <small class="small">Sem acordo de STOP, sem trabalho em altura.</small>
-          </div>
-
-          <div class="check">
-            <label>Plano de resgate revisado</label>
-            <div class="choice">
-              <label style="flex:1"><input type="radio" name="c5" value="ok"><div class="opt ok">OK</div></label>
-              <label style="flex:1"><input type="radio" name="c5" value="bad"><div class="opt bad">Não OK</div></label>
-            </div>
-            <small class="small">Quem aciona, como aciona, tempo de resposta.</small>
-          </div>
-        </div>
-
-        <div class="actionbar" style="margin-top:8px">
-          <button class="btn accent" id="btnConcluir">🚀 Concluir</button>
-          <button class="btn" id="btnSalvarSessao">💾 Salvar Sessão</button>
-          <button class="btn ghost" id="btnLimparSessao">🧹 Limpar</button>
-        </div>
-      </div>
-
-      <div class="card lux">
-        <div class="kicker" style="color:var(--gold)">Ritual</div>
-        <p class="lux-quote">“Você subiu com coragem; desceu com sabedoria. Continue mestre da obra.”</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- GLOSSÁRIO -->
-  <section id="gloss" class="section">
-    <div class="row">
-      <div class="card">
-        <h2>📚 Glossário Vivo</h2>
-        <div class="hr"></div>
-        <div class="list" id="glossList"></div>
-      </div>
-      <div class="card">
-        <h3>Adicionar termo</h3>
-        <label for="gTermo">Termo</label>
-        <input class="input" id="gTermo" placeholder="Ex.: Talabarte, Painel suspeito…"/>
-        <label for="gDef">Definição</label>
-        <textarea class="input" id="gDef" rows="3" placeholder="Explique do jeito do canteiro"></textarea>
-        <div class="actionbar" style="margin-top:8px">
-          <button class="btn" id="btnAddGloss">➕ Adicionar</button>
-          <button class="btn ghost" id="btnExportGloss">⬇️ Exportar JSON</button>
-          <label class="btn ghost" for="importGlossInput">⬆️ Importar</label>
-          <input id="importGlossInput" type="file" accept=".json" class="hidden"/>
-        </div>
-        <small class="small">Dica: grave áudios curtos do próprio time explicando termos e anexe como link na definição.</small>
-      </div>
-    </div>
-  </section>
-
-  <!-- REPORT RISCO -->
-  <section id="risk" class="section">
-    <div class="row">
-      <div class="card">
-        <h2>📸 Reportar Risco (offline)</h2>
-        <div class="hr"></div>
-        <label>Foto</label>
-        <div class="actionbar" style="margin:6px 0">
-          <button class="btn" id="btnRec">🎙️ Gravar áudio</button>
-          <button class="btn ghost" id="btnStopRec">⏹️ Parar</button>
-        </div>
-        <input class="input" id="rFoto" type="file" accept="image/*" capture="environment"/>
-        <label>Nota</label>
-        <textarea class="input" id="rNota" rows="3" placeholder="Descreva o risco observado"></textarea>
-        <div class="grid2" style="margin-top:8px">
-          <button class="btn warn" id="btnSalvarRisco">💾 Salvar</button>
-          <button class="btn ghost" id="btnLoc">📍 Pegar localização</button>
-        </div>
-        <small class="small">As evidências ficam salvas neste aparelho (localStorage). Você pode exportar depois.</small>
-      </div>
-
-      <div class="card">
-        <h3>Relatos salvos</h3>
-        <div id="rLista" class="list"></div>
-        <div class="actionbar" style="margin-top:8px">
-          <button class="btn" id="btnExportReports">⬇️ Exportar JSON</button>
-          <button class="btn ghost" id="btnClearReports">🗑️ Limpar todos</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONFIG -->
-  <section id="config" class="section">
-    <div class="row">
-      <div class="card">
-        <h2>⚙️ Configurações</h2>
-        <div class="hr"></div>
-        <div class="list">
-          <div class="item">
-            <div class="icon">🔊</div>
-            <div>
-              <strong>Ler tela em voz alta</strong>
-              <div class="hr"></div>
-              <div class="kv">
-                <label class="pill"><input type="checkbox" id="toggleTTS"/> habilitar</label>
-                <span class="pill">voz: sistema</span>
-              </div>
-            </div>
-          </div>
-          <div class="item">
-            <div class="icon">🧠</div>
-            <div>
-              <strong>Dados locais</strong>
-              <div class="hr"></div>
-              <div class="actionbar">
-                <button class="btn" id="btnExportAll">⬇️ Exportar tudo</button>
-                <button class="btn ghost" id="btnWipeAll">🧯 Apagar tudo</button>
-              </div>
-              <small class="small">Chaves usadas: <code>tico.settings</code>, <code>tico.tips</code>, <code>tico.glossary</code>, <code>tico.reports</code>, <code>tico.check.sessions</code>.</small>
-            </div>
-          </div>
-        </div>
-      </div>
-      <footer>Manual Prático TICOs · “Segurança é coragem com consciência.” · Luxara ⚫︎💛</footer>
-    </div>
-  </section>
-</main>
-
-<nav class="bottom-nav">
-  <div class="bottom-inner">
-    <a class="tab active" data-go="home">🏠<span>Início</span></a>
-    <a class="tab" data-go="nr10">⚡<span>NR10</span></a>
-    <a class="tab" data-go="nr35">🧗<span>NR35</span></a>
-    <a class="tab" data-go="check">✅<span>Checklist</span></a>
-    <a class="tab" data-go="risk">📸<span>Risco</span></a>
-    <a class="tab" data-go="dash">📊<span>Dash</span></a>
-  </div>
-</nav>
-<section id="dash" class="section">
-  <div class="container"><div class="row">
-    <div class="card"><h2>📊 Dashboard Offline</h2><div class="hr"></div>
-      <canvas id="chart1" width="320" height="140" style="width:100%;height:auto;background:#0f1117;border-radius:10px;border:1px solid #ffffff22"></canvas>
-      <div class="list" style="margin-top:10px">
-        <div class="item"><div class="icon">✅</div><div><strong>Checklists salvas</strong><small class="small"><br/><span id="mCheck">0</span></small></div></div>
-        <div class="item"><div class="icon">⚠️</div><div><strong>Relatos de risco</strong><small class="small"><br/><span id="mRisk">0</span></small></div></div>
-        <div class="item"><div class="icon">🔤</div><div><strong>Termos no glossário</strong><small class="small"><br/><span id="mGloss">0</span></small></div></div>
-      </div>
-    </div>
-    <div class="card"><h3>🔔 Lembrete Diário</h3><div class="hr"></div>
-      <label>Horário</label><input class="input" id="remHour" placeholder="Ex.: 07:30"/>
-      <div class="actionbar" style="margin-top:8px"><button class="btn" id="setReminder">Salvar lembrete</button></div>
-      <small class="small">Receba uma notificação para abrir o Checklist.</small>
-    </div>
-  </div></div>
-</section>
-
-<!-- SHEET: Dicas quando Não OK -->
-<div class="modal" id="modalDica">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="title">Dica rápida</div>
-    <div class="hr"></div>
-    <div id="modalDicaText" class="small"></div>
-    <div class="actionbar" style="margin-top:8px">
-      <button class="btn ok" id="btnFecharDica">Entendi</button>
+      <div class="loader" id="loader"><div class="spinner" aria-hidden="true"></div></div>
+      <iframe class="iframe" id="appFrame" src="about:blank" title="Aplicativo embutido"></iframe>
     </div>
   </div>
-</div>
 
-<!-- SHEET: Ritual de Encerramento -->
-<div class="modal" id="modalRitual">
-  <div class="sheet">
-    <div class="handle"></div>
-    <div class="title">⚡ Missão Concluída</div>
-    <div class="hr"></div>
-    <p class="lux-quote">“Sua vida foi o maior projeto entregue hoje.”</p>
-    <p class="small">Checklist salvo. Continue mestre da obra.</p>
-    <div class="actionbar" style="margin-top:8px">
-      <button class="btn ok" id="btnFecharRitual">Fechar</button>
-      <button class="btn ghost" data-go="home">Ir ao Início</button>
+  <!-- Hub Editor -->
+  <div class="viewer" id="editor" role="dialog" aria-modal="true" aria-labelledby="editorTitle">
+    <div class="frame">
+      <div class="bar">
+        <div class="left"><div class="dot" aria-hidden="true"></div><strong id="editorTitle">Configurar meu Hub</strong></div>
+        <div class="row" role="toolbar" aria-label="Ações do editor do Hub">
+          <button class="btn" id="btnEditorClose" type="button">✖️ Fechar</button>
+        </div>
+      </div>
+      <div style="padding:12px;display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 80px);overflow:auto;">
+        <p class="muted">
+          Este editor salva sua lista de apps <strong>somente neste dispositivo</strong> (localStorage).
+          Use “Copiar JSON” se quiser atualizar o <code>apps/apps.json</code> lá no GitHub.
+        </p>
+        <div class="row" style="gap:8px;flex-wrap:wrap;">
+          <button class="btn" id="btnEditorAdd" type="button">➕ Adicionar app</button>
+          <button class="btn" id="btnEditorReset" type="button">🗑️ Limpar meu Hub</button>
+          <button class="btn" id="btnEditorUseBase" type="button">⬇️ Usar padrão</button>
+        </div>
+        <label class="muted" for="editorRaw" style="font-size:.78rem;">JSON dos apps (array de objetos):</label>
+        <textarea id="editorRaw" style="width:100%;min-height:140px;font-family:monospace;font-size:.78rem;padding:8px;border-radius:10px;border:1px solid var(--stroke-soft);background:var(--bg-elevated);color:inherit;"></textarea>
+        <div class="row" style="gap:8px;flex-wrap:wrap;">
+          <button class="btn" id="btnEditorApply" type="button">💾 Aplicar JSON abaixo</button>
+          <button class="btn" id="btnEditorCopy" type="button">📋 Copiar JSON</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
 <script>
-// =============== STATE & UTILS ===============
-const $ = (sel, root=document) => root.querySelector(sel);
-const $$ = (sel, root=document) => [...root.querySelectorAll(sel)];
+/* ===== Util ===== */
+const $ = (q,root=document)=>root.querySelector(q);
+const $$ = (q,root=document)=>[...root.querySelectorAll(q)];
+const metaTheme = $('#metaThemeColor');
 
-const KEYS = {
-  settings: 'tico.settings',
-  tips: 'tico.tips',          // saved tip indices
-  glossary: 'tico.glossary',  // array of {term, def}
-  reports: 'tico.reports',    // array of {id, ts, note, photo, loc}
-  sessions: 'tico.check.sessions' // array of {ts, values:{}}
-};
-
-function load(key, fallback){
-  try{ return JSON.parse(localStorage.getItem(key)) ?? fallback; }catch(e){ return fallback; }
-}
-function save(key, value){
-  localStorage.setItem(key, JSON.stringify(value));
-}
-function toast(msg){
-  // simple replacement using alert for portability
-  console.log(msg);
-}
-
-// =============== NAVIGATION ===============
-function go(id){
-  $$('.section').forEach(s => s.classList.toggle('active', s.id === id));
-  $$('.tab').forEach(t => t.classList.toggle('active', t.dataset.go === id));
-  if (id === 'home') updateTipOfDay();
-}
-$$('[data-go]').forEach(el => el.addEventListener('click', e => {
-  const id = e.currentTarget.dataset.go;
-  if (id) go(id);
-}));
-
-// =============== TIPS & INSIGHTS ===============
-const TIPS = [
-  "Teste o detector em ponto conhecido antes e depois da medição.",
-  "Medição com uma mão reduz o caminho da corrente pelo tórax.",
-  "Sem acordo de STOP, sem trabalho em altura.",
-  "Ancora apenas em ponto fixo e confiável (nada de escada).",
-  "Talabarte deve suportar seu peso. Teste puxando antes de subir.",
-  "Painel com cheiro de ozônio = risco. Pare e investigue.",
-  "Plano de resgate claro: quem aciona, como aciona, tempo.",
-  "Ferramenta isolada: sem fissura, sem descascado.",
-  "Rádio carregado e canal combinado antes de subir.",
-  "Luvas isolantes certas no par certo (nada trocado).",
-  "Dupla: você sobe, eu vigio. Sem exceção.",
-  "Detector sem bateria = detector que mente. Confira carga."
-];
-const INSIGHTS = [
-  "⚡ Segurança é coragem com consciência.",
-  "◐ Subir é coragem. Descer com segurança é sabedoria.",
-  "ψ Comunicação é o EPI invisível da equipe.",
-  "⚡ Sem pressa: a pressa só adianta o erro.",
-  "◐ Cada checklist é uma escada invisível.",
-  "ψ Pare na dúvida. Dúvida é risco pedindo atenção."
-];
-
-function updateTipOfDay(){
-  let saved = load(KEYS.tips, []);
-  const idx = Math.floor(Math.random() * TIPS.length);
-  $('#tipText').textContent = TIPS[idx];
-  $('#btnSaveTip').onclick = () => {
-    if(!saved.includes(idx)){ saved.push(idx); save(KEYS.tips, saved); }
-    alert('Dica salva nos seus favoritos (dados locais).');
-  };
-}
-
-$('#btnNewTip').addEventListener('click', updateTipOfDay);
-$('#btnInsight').addEventListener('click', () => {
-  const s = INSIGHTS[Math.floor(Math.random()*INSIGHTS.length)];
-  alert(s);
-});
-
-// =============== TTS (Speech) ===============
-const settings = load(KEYS.settings, { tts: false });
-$('#toggleTTS').checked = settings.tts;
-
-function speak(text){
-  if(!('speechSynthesis' in window)){ alert('Leitor de voz não suportado neste dispositivo.'); return; }
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'pt-BR';
-  speechSynthesis.cancel();
-  speechSynthesis.speak(u);
-}
-$('#toggleTTS').addEventListener('change', e => {
-  settings.tts = e.target.checked; save(KEYS.settings, settings);
-});
-$('#btnSpeak').addEventListener('click', () => {
-  const active = $('.section.active');
-  if(!active){ return; }
-  const text = active.innerText.replace(/\s+/g,' ').trim();
-  speak(text.slice(0, 8000)); // safety limit
-});
-
-// =============== CHECKLIST LOGIC ===============
-const BAD_TIPS = {
-  c1: "Ferramenta isolada não ok: troque a peça, verifique luvas e cabos. Sem ferramenta segura não há trabalho.",
-  c2: "Detector sem teste é risco oculto. Valide em ponto conhecido, meça e reteste.",
-  c3: "Âncora insegura derruba herói. Use ponto fixo e homologado. Evite escada/tubo fino.",
-  c4: "Sem palavra STOP combinada, a equipe vira ruído. Combine agora antes de subir.",
-  c5: "Sem plano de resgate, cada minuto conta contra você. Defina responsável e caminho."
-};
-
-function openSheet(id){ $(id).classList.add('show'); }
-function closeSheet(id){ $(id).classList.remove('show'); }
-
-$('#btnFecharDica').addEventListener('click', () => closeSheet('#modalDica'));
-$('#btnFecharRitual').addEventListener('click', () => closeSheet('#modalRitual'));
-
-$('#btnConcluir').addEventListener('click', () => {
-  const fields = ['c1','c2','c3','c4','c5'];
-  let anyBad = false;
-  for(const f of fields){
-    const val = $(`input[name="${f}"]:checked`)?.value;
-    if(val === 'bad'){
-      anyBad = true;
-      $('#modalDicaText').textContent = BAD_TIPS[f] || "Ajuste este item antes de prosseguir.";
-      openSheet('#modalDica');
-      break;
-    }
-  }
-  if(!anyBad){
-    // Ritual
-    saveSession();
-    openSheet('#modalRitual');
-  }
-});
-
-function saveSession(){
-  const values = {};
-  ['c1','c2','c3','c4','c5'].forEach(f => {
-    values[f] = $(`input[name="${f}"]:checked`)?.value || null;
-  });
-  const sess = load(KEYS.sessions, []);
-  sess.push({ ts: Date.now(), values });
-  save(KEYS.sessions, sess);
-}
-
-$('#btnSalvarSessao').addEventListener('click', () => { saveSession(); alert('Sessão salva localmente.'); });
-$('#btnLimparSessao').addEventListener('click', () => {
-  $$('input[type="radio"]').forEach(i => i.checked = false);
-});
-
-// =============== GLOSSÁRIO ===============
-function renderGloss(){
-  const list = load(KEYS.glossary, []);
-  const root = $('#glossList'); root.innerHTML = '';
-  if(!list.length){ root.innerHTML = '<small class="small">Sem termos ainda. Adicione o primeiro.</small>'; return; }
-  list.forEach((g, i) => {
-    const div = document.createElement('div');
-    div.className = 'item';
-    div.innerHTML = `<div class="icon">🔤</div>
-      <div style="flex:1">
-        <strong>${g.term}</strong>
-        <div class="hr"></div>
-        <p class="small">${g.def || ''}</p>
-        <div class="actionbar">
-          <button class="btn ghost" data-edit="${i}">✏️ Editar</button>
-          <button class="btn ghost" data-del="${i}">🗑️ Remover</button>
-        </div>
-      </div>`;
-    root.appendChild(div);
-  });
-  // handlers
-  $$('#glossList [data-edit]').forEach(b=> b.onclick = () => {
-    const list = load(KEYS.glossary, []);
-    const g = list[+b.dataset.edit];
-    const nt = prompt('Termo:', g.term) ?? g.term;
-    const nd = prompt('Definição:', g.def) ?? g.def;
-    list[+b.dataset.edit] = {term: nt, def: nd};
-    save(KEYS.glossary, list); renderGloss();
-  });
-  $$('#glossList [data-del]').forEach(b=> b.onclick = () => {
-    const list = load(KEYS.glossary, []);
-    list.splice(+b.dataset.del,1);
-    save(KEYS.glossary, list); renderGloss();
-  });
-}
-$('#btnAddGloss').addEventListener('click', () => {
-  const term = $('#gTermo').value.trim();
-  const def = $('#gDef').value.trim();
-  if(!term){ alert('Informe um termo.'); return; }
-  const list = load(KEYS.glossary, []);
-  list.push({term, def});
-  save(KEYS.glossary, list);
-  $('#gTermo').value=''; $('#gDef').value='';
-  renderGloss();
-});
-$('#btnExportGloss').addEventListener('click', () => exportJSON(KEYS.glossary, load(KEYS.glossary, []), 'glossario_tico.json'));
-$('#importGlossInput').addEventListener('change', (e)=> importJSON(e, KEYS.glossary, renderGloss));
-
-// =============== REPORT RISCO (OFFLINE) ===============
-async function fileToDataURL(file){
-  return new Promise((resolve, reject) => {
-    const fr = new FileReader();
-    fr.onload = () => resolve(fr.result);
-    fr.onerror = reject;
-    fr.readAsDataURL(file);
-  });
-}
-
-$('#btnLoc').addEventListener('click', () => {
-  if(!('geolocation' in navigator)){ alert('Geolocalização indisponível.'); return; }
-  navigator.geolocation.getCurrentPosition(pos => {
-    $('#btnLoc').textContent = `📍 ${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`;
-    $('#btnLoc').dataset.loc = JSON.stringify({lat:pos.coords.latitude, lon:pos.coords.longitude});
-  }, err => alert('Não foi possível obter localização.'));
-});
-
-$('#btnSalvarRisco').addEventListener('click', async () => {
-  const note = $('#rNota').value.trim();
-  if(!note && !$('#rFoto').files[0]){ alert('Inclua uma nota ou uma foto.'); return; }
-  let photo = null;
-  if($('#rFoto').files[0]){
-    photo = await fileToDataURL($('#rFoto').files[0]);
-  }
-  const loc = $('#btnLoc').dataset.loc ? JSON.parse($('#btnLoc').dataset.loc) : null;
-  const arr = load(KEYS.reports, []);
-  arr.push({ id: crypto.randomUUID?.() || String(Date.now()), ts: Date.now(), note, photo, loc });
-  save(KEYS.reports, arr);
-  $('#rNota').value=''; $('#rFoto').value=''; $('#btnLoc').textContent='📍 Pegar localização'; delete $('#btnLoc').dataset.loc;
-  renderReports();
-  alert('Relato salvo localmente.');
-});
-
-function renderReports(){
-  const arr = load(KEYS.reports, []);
-  const root = $('#rLista'); root.innerHTML='';
-  if(!arr.length){ root.innerHTML = '<small class="small">Sem relatos ainda.</small>'; return; }
-  arr.slice().reverse().forEach(r => {
-    const div = document.createElement('div');
-    div.className = 'item';
-    const when = new Date(r.ts).toLocaleString();
-    const loc = r.loc ? `${r.loc.lat.toFixed?.(5)}, ${r.loc.lon.toFixed?.(5)}` : '—';
-    div.innerHTML = `<div class="icon">⚠️</div>
-      <div style="flex:1">
-        <strong>${when}</strong>
-        <p class="small">${r.note || '(sem texto)'}</p>
-        <div class="kv">
-          <span class="pill">loc: ${loc}</span>
-        </div>
-        ${r.photo ? `<div class="gallery" style="margin-top:6px"><img src="${r.photo}" alt="foto do risco"/></div>`:''}
-        <div class="actionbar" style="margin-top:6px">
-          <button class="btn ghost" data-del="${r.id}">Remover</button>
-        </div>
-      </div>`;
-    root.appendChild(div);
-  });
-  $$('#rLista [data-del]').forEach(b => b.onclick = () => {
-    let arr = load(KEYS.reports, []);
-    arr = arr.filter(x => x.id !== b.dataset.del);
-    save(KEYS.reports, arr); renderReports();
-  });
-}
-$('#btnExportReports').addEventListener('click', () => exportJSON(KEYS.reports, load(KEYS.reports, []), 'relatos_tico.json'));
-$('#btnClearReports').addEventListener('click', () => { if(confirm('Limpar todos os relatos?')){ save(KEYS.reports, []); renderReports(); }});
-
-// =============== EXPORT/IMPORT ALL ===============
-function exportJSON(key, data, filename){
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
-  setTimeout(()=> URL.revokeObjectURL(url), 1000);
-}
-function importJSON(ev, key, onDone){
-  const f = ev.target.files[0]; if(!f) return;
-  const fr = new FileReader();
-  fr.onload = () => { try { const data = JSON.parse(fr.result); save(key, data); onDone && onDone(); } catch(e){ alert('Arquivo inválido.'); } };
-  fr.readAsText(f);
-}
-$('#btnExportAll').addEventListener('click', () => {
-  const bundle = {
-    [KEYS.settings]: load(KEYS.settings, {}),
-    [KEYS.tips]: load(KEYS.tips, []),
-    [KEYS.glossary]: load(KEYS.glossary, []),
-    [KEYS.reports]: load(KEYS.reports, []),
-    [KEYS.sessions]: load(KEYS.sessions, []),
-  };
-  exportJSON('tico.bundle', bundle, 'tico_bundle.json');
-});
-$('#btnWipeAll').addEventListener('click', () => {
-  if(confirm('Apagar TODOS os dados locais?')){
-    Object.values(KEYS).forEach(k => localStorage.removeItem(k));
-    renderGloss(); renderReports();
-    alert('Dados apagados deste aparelho.');
-  }
-});
-
-// =============== INIT ===============
-function init(){
-  updateTipOfDay();
-  renderGloss();
-  renderReports();
-}
-init();
-</script>
-
-<script>
-// SW register + install
-if('serviceWorker' in navigator){ window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js')); }
-let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt = e; });
-document.addEventListener('click', async (e)=>{
-  const b = e.target.closest('#btnInstall');
-  if(!b) return;
-  if(deferredPrompt){ deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; }
-  else alert('Se o botão não aparecer, use "Adicionar à Tela Inicial".');
-});
-
-// Simple chart (no libs): bar chart for counts
-function drawBarChart(canvas, data){
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  ctx.clearRect(0,0,W,H);
-  const labels = ['Check','Risco','Gloss'];
-  const maxv = Math.max(1, ...data);
-  const bw = Math.floor(W/(labels.length*1.8));
-  const gap = Math.floor(bw*0.8);
-  let x = Math.floor((W - (bw*labels.length + gap*(labels.length-1)))/2);
-  ctx.fillStyle = '#cbd5e1';
-  labels.forEach((lab, i)=>{
-    const h = Math.round((data[i]/maxv)*(H-30));
-    ctx.fillStyle = '#FF7A00';
-    ctx.fillRect(x, H-10-h, bw, h);
-    ctx.fillStyle = '#cbd5e1';
-    ctx.textAlign = 'center'; ctx.font = '12px system-ui';
-    ctx.fillText(lab, x+bw/2, H-2);
-    x += bw + gap;
-  });
-}
-
-// Dashboard metrics & reminder
-const KEYS = {
-  settings: 'tico.settings',
-  tips: 'tico.tips',
-  glossary: 'tico.glossary',
-  reports: 'tico.reports',
-  sessions: 'tico.check.sessions'
-};
-function load(key, fallback){ try{ return JSON.parse(localStorage.getItem(key)) ?? fallback; }catch(e){ return fallback; } }
-function save(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
-
-function refreshMetrics(){
-  const checks = (load(KEYS.sessions, [])||[]).length;
-  const risks  = (load(KEYS.reports, [])||[]).length;
-  const gloss  = (load(KEYS.glossary, [])||[]).length;
-  document.getElementById('mCheck').textContent = checks;
-  document.getElementById('mRisk').textContent  = risks;
-  document.getElementById('mGloss').textContent = gloss;
-  const c = document.getElementById('chart1');
-  if(c) drawBarChart(c, [checks, risks, gloss]);
-}
-refreshMetrics();
-window.addEventListener('storage', refreshMetrics);
-
-// Reminder
-const remInput = document.getElementById('remHour');
-const prev = load('tico.reminder', null);
-if(prev){ remInput.value = prev; }
-document.getElementById('setReminder').onclick = async ()=>{
-  const v = (remInput.value||'').trim();
-  if(!/^[0-2]\d:[0-5]\d$/.test(v)){ alert('Informe como HH:MM (24h).'); return; }
-  save('tico.reminder', v);
-  if('Notification' in window){
-    const perm = await Notification.requestPermission();
-    if(perm!=='granted'){ alert('Notificações não liberadas.'); return; }
-  }
-  alert('Lembrete salvo.');
-};
-
-// Timer check each minute
-setInterval(()=>{
-  const v = load('tico.reminder', null);
-  if(!v || !('Notification' in window) || Notification.permission!=='granted') return;
-  const [h,m] = v.split(':').map(Number);
-  const now = new Date();
-  if(now.getHours()===h && now.getMinutes()===m){
-    new Notification('Checklist diário', { body: 'Hora de abrir o Checklist TICOs.', icon:'./icons/icon-192.png' });
-  }
-}, 60000);
-
-// Audio recording for risk
-let mediaRec = null, chunks = [];
-document.getElementById('btnRec').onclick = async ()=>{
+/* ===== Render ===== */
+async function loadApps(){
   try{
-    const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
-    chunks = [];
-    mediaRec = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-    mediaRec.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
-    mediaRec.onstop = async ()=>{
-      const blob = new Blob(chunks, { type: 'audio/webm' });
-      const url = URL.createObjectURL(blob);
-      // attach to last report if exists or wait until save
-      localStorage.setItem('tico.last.audio', url);
-      alert('Áudio gravado (será anexado ao próximo relato salvo).');
-    };
-    mediaRec.start();
-  }catch(e){ alert('Falha ao acessar microfone.'); }
-};
-document.getElementById('btnStopRec').onclick = ()=>{
-  if(mediaRec && mediaRec.state!=='inactive'){ mediaRec.stop(); }
-};
-
-// Hook into existing salvar risco to append audio (if present)
-const btnSalvar = document.getElementById('btnSalvarRisco');
-if(btnSalvar){
-  const orig = btnSalvar.onclick;
-  btnSalvar.onclick = async ()=>{
-    const before = (localStorage.getItem('tico.last.audio')||null);
-    await (orig && orig());
-    if(before){
-      // append audio to the last report
-      const arr = load(KEYS.reports, []);
-      if(arr.length){
-        arr[arr.length-1].audio = before;
-        save(KEYS.reports, arr);
-        localStorage.removeItem('tico.last.audio');
-        // re-render if function exists
-        (window.renderReports||function(){})();
-      }
-    }
-  };
+    const res = await fetch('./apps/apps.json', {cache:'no-store'});
+    const data = await res.json();
+    renderCards(data.apps||[]);
+  }catch(e){
+    const cards = $('#cards');
+    cards.innerHTML = '<div class="card"><div class="icon">⚠️</div><div><div class="title">Erro no apps.json</div><div class="muted">Não foi possível carregar a lista de apps (apps/apps.json).</div></div></div>';
+  }
 }
-</script>
+function renderCards(apps){
+  const root = $('#cards');
+  root.innerHTML = '';
+  apps.forEach(app => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const iconSrc = app.icon || 'icons/icon-192.png';
+    card.innerHTML = `
+      <div class="icon" aria-hidden="true">
+        <img src="${iconSrc}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:12px"/>
+      </div>
+      <div style="flex:1">
+        <div class="title">${app.title || app.key}</div>
+        <div class="muted">${app.desc || ''}</div>
+        <div class="row" style="margin-top:8px">
+          <button class="btn" type="button" data-open="${app.key}">Abrir no Hub</button>
+          <button class="btn" type="button" data-open="${app.key}" data-newtab="1">Abrir em aba</button>
+        </div>
+      </div>`;
+    root.appendChild(card);
+  });
+  $$('[data-open]').forEach(b=>{
+    b.onclick = ()=>{
+      const key = b.getAttribute('data-open');
+      const newtab = b.hasAttribute('data-newtab');
+      openByKey(key, newtab, apps);
+    };
+    b.addEventListener('mouseenter', ()=> {
+      const key = b.getAttribute('data-open');
+      const app = apps.find(x=>x.key===key);
+      if(app && !document.querySelector(`link[data-prefetch="${app.url}"]`)){
+        const l = document.createElement('link');
+        l.rel = 'prefetch';
+        l.href = app.url;
+        l.as = 'document';
+        l.setAttribute('data-prefetch', app.url);
+        document.head.appendChild(l);
+      }
+    }, {passive:true});
+  });
+}
 
+/* ===== Viewer ===== */
+const viewer = $('#viewer');
+const frame = $('#appFrame');
+const loader = $('#loader');
+const btnExternal = $('#btnExternal');
+let lastFocus = null;
+
+function openApp(app, newtab){
+  if(newtab){
+    window.open(app.url, '_blank', 'noopener');
+    return;
+  }
+  lastFocus = document.activeElement;
+  $('#barTitle').textContent = app.title || app.key;
+  btnExternal.href = app.url;
+  loader.classList.add('show');
+  frame.onload = ()=> setTimeout(()=> loader.classList.remove('show'), 120);
+  frame.src = app.url;
+  viewer.classList.add('show');
+  document.body.classList.add('modal-open');
+  $('#btnHome').focus();
+  localStorage.setItem('hub.last', app.key);
+  location.hash = '#app=' + app.key;
+}
+function closeViewer(){
+  frame.src = 'about:blank';
+  viewer.classList.remove('show');
+  document.body.classList.remove('modal-open');
+  history.pushState('', document.title, window.location.pathname + window.location.search);
+  if(lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+}
+
+function openByKey(key, newtab, apps){
+  const app = (apps||[]).find(x=>x.key===key);
+  if(app) openApp(app, newtab);
+}
+
+$('#btnHome').onclick = closeViewer;
+
+window.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && viewer.classList.contains('show')) closeViewer();
+});
+viewer.addEventListener('click', (e)=>{
+  if(e.target === viewer) closeViewer();
+});
+
+/* ===== Hash restore ===== */
+function checkHash(){
+  const h = location.hash || '';
+  const m = h.match(/#app=([^&]+)/);
+  if(!m) return;
+  const key = decodeURIComponent(m[1]);
+  fetch('./apps/apps.json',{cache:'no-store'})
+    .then(r=>r.json())
+    .then(data=>{
+      const apps = data.apps||[];
+      openByKey(key,false,apps);
+    })
+    .catch(()=>{});
+}
+
+/* ===== Tema ===== */
+function setTheme(name){
+  if(name === 'lux'){
+    document.documentElement.setAttribute('data-theme','lux');
+    metaTheme.setAttribute('content','#0b0819');
+    $('#themeLux').setAttribute('aria-pressed','true');
+    $('#themeCyan').setAttribute('aria-pressed','false');
+    localStorage.setItem('hub.theme','lux');
+  }else{
+    document.documentElement.removeAttribute('data-theme');
+    metaTheme.setAttribute('content','#050510');
+    $('#themeCyan').setAttribute('aria-pressed','true');
+    $('#themeLux').setAttribute('aria-pressed','false');
+    localStorage.setItem('hub.theme','assert');
+  }
+}
+$('#themeCyan').onclick = ()=> setTheme('assert');
+$('#themeLux').onclick = ()=> setTheme('lux');
+
+const storedTheme = localStorage.getItem('hub.theme');
+if(storedTheme === 'lux') setTheme('lux');
+
+/* ===== PWA ===== */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=> navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+}
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); deferredPrompt=e; });
+$('#btnInstall').onclick = async()=>{
+  if(deferredPrompt){ deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt=null; }
+  else alert('Se o prompt não aparecer, use “Adicionar à Tela de Início”.');
+};
+
+/* ===== Hub Editor (apps pessoais) ===== */
+let HUB_BASE_APPS = [];
+let HUB_USER_APPS = null;
+
+function hubLoadUserApps(){
+  const raw = localStorage.getItem('hub.user.apps');
+  if(!raw) return null;
+  try{
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : null;
+  }catch(e){
+    return null;
+  }
+}
+function hubSaveUserApps(apps){
+  if(!Array.isArray(apps)){
+    localStorage.removeItem('hub.user.apps');
+    HUB_USER_APPS = null;
+    return;
+  }
+  HUB_USER_APPS = apps;
+  localStorage.setItem('hub.user.apps', JSON.stringify(apps));
+}
+function hubEffectiveApps(){
+  const params = new URL(location.href).searchParams;
+  const virgem = params.get('virgem');
+  const user = HUB_USER_APPS || hubLoadUserApps();
+  if(virgem === '1' || virgem === 'true'){
+    return (user && user.length) ? user : [];
+  }
+  if(user && user.length) return user;
+  return HUB_BASE_APPS;
+}
+
+async function loadApps(){
+  try{
+    const res = await fetch('./apps/apps.json', {cache:'no-store'});
+    const data = await res.json();
+    HUB_BASE_APPS = Array.isArray(data.apps) ? data.apps : [];
+    HUB_USER_APPS = hubLoadUserApps();
+    renderCards(hubEffectiveApps());
+  }catch(e){
+    const cards = $('#cards');
+    cards.innerHTML = '<div class="card"><div class="icon">⚠️</div><div><div class="title">Erro no apps.json</div><div class="muted">Não foi possível carregar a lista de apps (apps/apps.json).</div></div></div>';
+  }
+}
+
+const editor = $('#editor');
+const editorRaw = $('#editorRaw');
+const btnHubEditor = $('#btnHubEditor');
+
+if(btnHubEditor && editor && editorRaw){
+  const btnEditorClose = $('#btnEditorClose');
+  const btnEditorApply = $('#btnEditorApply');
+  const btnEditorCopy = $('#btnEditorCopy');
+  const btnEditorAdd = $('#btnEditorAdd');
+  const btnEditorReset = $('#btnEditorReset');
+  const btnEditorUseBase = $('#btnEditorUseBase');
+
+  function openEditor(){
+    const apps = hubEffectiveApps();
+    editorRaw.value = JSON.stringify(apps, null, 2);
+    editor.classList.add('show');
+    document.body.classList.add('modal-open');
+    setTimeout(()=> editorRaw.focus(), 50);
+  }
+  function closeEditor(){
+    editor.classList.remove('show');
+    document.body.classList.remove('modal-open');
+  }
+
+  btnHubEditor.onclick = openEditor;
+  if(btnEditorClose) btnEditorClose.onclick = closeEditor;
+
+  if(btnEditorApply){
+    btnEditorApply.onclick = ()=>{
+      try{
+        const parsed = JSON.parse(editorRaw.value || '[]');
+        if(!Array.isArray(parsed)){
+          alert('O JSON precisa ser um array de objetos (apps).');
+          return;
+        }
+        hubSaveUserApps(parsed);
+        renderCards(parsed);
+        alert('Hub atualizado só neste dispositivo. Para tornar padrão, copie o JSON e atualize o apps/apps.json no GitHub.');
+      }catch(e){
+        alert('JSON inválido. Confira se está correto.\n\n' + e.message);
+      }
+    };
+  }
+  if(btnEditorCopy){
+    btnEditorCopy.onclick = ()=>{
+      editorRaw.select();
+      try{
+        const ok = document.execCommand('copy');
+        if(ok) alert('JSON copiado para a área de transferência.');
+        else alert('Não consegui copiar automaticamente. Selecione e copie manualmente.');
+      }catch(e){
+        alert('Selecione o texto e copie manualmente. Alguns navegadores bloqueiam cópia automática.');
+      }
+    };
+  }
+  if(btnEditorReset){
+    btnEditorReset.onclick = ()=>{
+      if(confirm('Limpar seu Hub pessoal neste dispositivo e voltar para o padrão?')){
+        localStorage.removeItem('hub.user.apps');
+        HUB_USER_APPS = null;
+        editorRaw.value = JSON.stringify(HUB_BASE_APPS, null, 2);
+        renderCards(HUB_BASE_APPS);
+      }
+    };
+  }
+  if(btnEditorUseBase){
+    btnEditorUseBase.onclick = ()=>{
+      editorRaw.value = JSON.stringify(HUB_BASE_APPS, null, 2);
+    };
+  }
+  if(btnEditorAdd){
+    btnEditorAdd.onclick = ()=>{
+      let apps;
+      try{
+        apps = JSON.parse(editorRaw.value || '[]');
+        if(!Array.isArray(apps)) apps = [];
+      }catch(e){
+        apps = [];
+      }
+      apps.push({
+        key: 'meu-app-' + (apps.length + 1),
+        title: 'Novo app',
+        desc: 'Descrição do app...',
+        icon: 'icons/icon-192.png',
+        url: 'https://seu-app-ou-github-pages-aqui'
+      });
+      editorRaw.value = JSON.stringify(apps, null, 2);
+    };
+  }
+
+  editor.addEventListener('click', (e)=>{
+    if(e.target === editor) closeEditor();
+  });
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && editor.classList.contains('show')) closeEditor();
+  });
+}
+
+/* ===== Boot ===== */
+loadApps(); checkHash();
+</script>
 </body>
 </html>
